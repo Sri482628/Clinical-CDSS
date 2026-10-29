@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Patient Report | Clinical Decision Support System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="report-toolbar">
+  <div class="rt-title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+    Patient Diagnostic Report
+  </div>
+  <div class="report-actions-bar">
+    <a href="index.html" class="btn btn-outline">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Dashboard
+    </a>
+    <button type="button" class="btn btn-primary" id="printBtn">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+</div>
+
+<div class="report-sheet-wrap">
+
+  <div id="noReportState" class="no-report" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+    <h3 style="font-family:var(--font-display); margin-bottom:8px;">No report data found</h3>
+    <p>Please complete a patient assessment on the dashboard and click <b>"Generate Full Patient Report"</b> first.</p>
+    <br/>
+    <a href="index.html" class="btn btn-primary">Go to Dashboard</a>
+  </div>
+
+  <div class="report-sheet" id="reportSheet" style="display:none;">
+
+    <!-- Letterhead -->
+    <div class="report-letterhead">
+      <div class="rl-left">
+        <div class="brand-mark" style="width:44px;height:44px;">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2"><path d="M8 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M9 3h6v4H9z"/><path d="M9 13h6M12 10v6"/></svg>
+        </div>
+        <div>
+          <div class="rl-org">Explainable AI Clinical Decision Support System</div>
+          <div class="rl-org-sub">Multi-Disease Prediction &amp; Intelligent Test Recommendation</div>
+        </div>
+      </div>
+      <div class="rl-right">
+        <div class="rl-id" id="repId">Report #CDSS-000000</div>
+        <div id="repDateTime">—</div>
+      </div>
+    </div>
+
+    <!-- Patient details -->
+    <div class="report-h2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Patient Details
+    </div>
+    <div class="report-grid" id="repPatientGrid"></div>
+
+    <!-- Vitals -->
+    <div class="report-h2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Clinical Vitals Recorded
+    </div>
+    <div class="report-grid" id="repVitalsGrid"></div>
+
+    <!-- Symptoms -->
+    <div class="report-h2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 2"/></svg>
+      Reported Symptoms
+    </div>
+    <p id="repSymptoms" style="font-size:13px; color:var(--text-secondary);">—</p>
+
+    <!-- Disease Risk Assessment -->
+    <div class="report-h2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+      Disease Risk Assessment
+    </div>
+    <div id="repDiseaseRows"></div>
+
+    <!-- Explainable AI -->
+    <div class="report-h2 report-xai">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+      Explainable AI Analysis
+    </div>
+    <div class="report-xai">
+      <ul id="repXaiList"></ul>
+    </div>
+
+    <!-- Recommended Tests -->
+    <div class="report-h2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6L4 20a1 1 0 0 0 1 2h14a1 1 0 0 0 1-2L15 8V2"/><path d="M9 15h6"/></svg>
+      Recommended Diagnostic Tests
+    </div>
+    <div class="report-tests-cols" id="repTestsCols"></div>
+
+    <!-- Specialist Recommendation -->
+    <div class="report-h2">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Specialist Recommendation
+    </div>
+    <div class="report-specialists" id="repSpecialists"></div>
+
+    <div class="report-disclaimer">
+      <b>Disclaimer:</b> This report is generated by a rule-based, explainable clinical decision-support prototype developed for academic demonstration purposes only. It does not constitute a medical diagnosis. All findings must be reviewed and confirmed by a licensed physician before any clinical decision is made.
+    </div>
+
+    <div class="report-sign">
+      <div class="sign-block">
+        <div class="sign-line"></div>
+        Attending Physician Signature
+      </div>
+      <div class="sign-block">
+        <div class="sign-line"></div>
+        Hospital Seal / Stamp
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+  renderReportPage();
+  document.getElementById("printBtn").addEventListener("click", () => window.print());
+</script>
+</body>
+</html>

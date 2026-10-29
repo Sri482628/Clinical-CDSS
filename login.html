@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login | Explainable AI Clinical Decision Support System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="login-shell">
+
+  <!-- Left branding panel -->
+  <aside class="login-aside">
+    <div class="pulse-line"></div>
+
+    <div class="brand-row">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M9 3h6v4H9z"/><path d="M9 13h6M12 10v6"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">Clinical Decision<br/>Support System</div>
+        <div class="brand-sub">Explainable AI &middot; Multi-Disease</div>
+      </div>
+    </div>
+
+    <div class="login-hero">
+      <h1>Smarter, explainable insight&nbsp;at the point of care.</h1>
+      <p>Enter vitals and symptoms to generate transparent, rule-based risk assessments for Diabetes, Heart Disease and Kidney Disease — complete with the exact reasons behind every prediction, recommended diagnostic tests and specialist referral.</p>
+    </div>
+
+    <div class="login-stats">
+      <div class="stat"><b>3</b><span>Diseases Modeled</span></div>
+      <div class="stat"><b>8</b><span>Symptom Signals</span></div>
+      <div class="stat"><b>100%</b><span>Explainable Output</span></div>
+    </div>
+  </aside>
+
+  <!-- Right login form -->
+  <main class="login-main">
+    <form class="login-card glass" id="loginForm" autocomplete="off">
+      <h2>Doctor Sign In</h2>
+      <p class="lead">Secure access for authorized clinical staff only.</p>
+
+      <div class="login-error" id="loginError">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span id="loginErrorText">Invalid username or password.</span>
+      </div>
+
+      <div class="field">
+        <label for="username">Doctor ID / Username</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="username" placeholder="e.g. doctor" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="password" placeholder="Enter password" required />
+          <button type="button" class="toggle-eye" id="toggleEye" aria-label="Show password">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="login-meta-row">
+        <label><input type="checkbox" id="rememberMe" /> Remember me</label>
+        <span style="color:var(--teal-600); font-weight:600; cursor:pointer;">Forgot password?</span>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        Sign In to Dashboard
+      </button>
+
+      <div class="demo-hint">
+        Demo credentials for evaluation &mdash; Username: <code>doctor</code> &nbsp;Password: <code>doctor@123</code><br/>
+        (Client-side authentication only — no backend/database is used in this project.)
+      </div>
+    </form>
+  </main>
+</div>
+
+<script>
+  // ---- Hardcoded demo credential store (client-side only, per project scope) ----
+  const VALID_USERS = [
+    { username: "doctor", password: "doctor@123", name: "Dr. A. Sharma", role: "Consulting Physician" },
+    { username: "admin",  password: "admin@123",  name: "Dr. R. Verma",  role: "Chief Medical Officer" }
+  ];
+
+  const form = document.getElementById("loginForm");
+  const errorBox = document.getElementById("loginError");
+  const errorText = document.getElementById("loginErrorText");
+  const toggleEye = document.getElementById("toggleEye");
+  const passwordInput = document.getElementById("password");
+
+  // If already logged in, skip straight to dashboard
+  if (sessionStorage.getItem("cdss_logged_in") === "true") {
+    window.location.href = "index.html";
+  }
+
+  toggleEye.addEventListener("click", () => {
+    const isPwd = passwordInput.type === "password";
+    passwordInput.type = isPwd ? "text" : "password";
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    const match = VALID_USERS.find(
+      (u) => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+    );
+
+    if (match) {
+      sessionStorage.setItem("cdss_logged_in", "true");
+      sessionStorage.setItem("cdss_doctor_name", match.name);
+      sessionStorage.setItem("cdss_doctor_role", match.role);
+      window.location.href = "index.html";
+    } else {
+      errorText.textContent = "Invalid username or password. Please try again.";
+      errorBox.classList.add("show");
+      form.querySelectorAll("input").forEach((i) => i.parentElement.classList?.add?.());
+    }
+  });
+</script>
+</body>
+</html>
